@@ -1,7 +1,9 @@
+print("Введите количество улиц(n) и запросов(k): ")
 n, k = map(int, input().split())
-streets = [0] * (n + 1) # массив для улиц
+streets = [0] * (n + 1)
 queries = [] #все запросы
 
+print("Введите запросы: ")
 for _ in range(k):
     q = list(map(int, input().split()))
     queries.append(q)
@@ -19,5 +21,6 @@ for q in queries:
         total = sum(streets[u:r+1])
         answers.append(total)
 
+print("Ответы на запросы: ")
 for i in answers:
     print(i)
