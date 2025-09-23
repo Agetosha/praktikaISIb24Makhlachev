@@ -1,5 +1,4 @@
 import random
-import numpy as np
 
 def find_min_path(mountain, sum):
     cur_pos_j = 0 #текущая позиция по j (горизонтали)
@@ -13,7 +12,7 @@ def find_min_path(mountain, sum):
             else:
                 cur_pos_j = j
                 sum += mountain[i][j]
-            print(mountain[i][cur_pos_j], end=' ')
+            print(mountain[i][cur_pos_j], end=' ') 
 
     print()
     return sum
