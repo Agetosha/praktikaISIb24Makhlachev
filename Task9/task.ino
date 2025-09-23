@@ -1,48 +1,51 @@
-#define PHOTO_SENSOR A0
+#define LDR_PIN A0 // фоторезистор
+#define LED_GREEN 5
+#define LED_RED 12
 
-#define GREEN_LED 5
-#define RED_LED 12
-
-const int threshold = 512;
-const unsigned long doorOpenTime = 3000;
+const int lightBorder = 512;          // граница срабатывания
+const unsigned long openDelay = 3000; // время открытой двери
 
 void setup()
 {
-    pinMode(GREEN_LED, OUTPUT);
-    pinMode(RED_LED, OUTPUT);
+    pinMode(LED_GREEN, OUTPUT);
+    pinMode(LED_RED, OUTPUT);
     Serial.begin(9600);
 
-    digitalWrite(RED_LED, HIGH);
-    digitalWrite(GREEN_LED, LOW);
-    Serial.println("Двери закрыты");
+    // стартовое состояние: дверь закрыта
+    digitalWrite(LED_GREEN, LOW);
+    digitalWrite(LED_RED, HIGH);
+    Serial.println("Дверь закрыта");
 }
 
 void loop()
 {
-    int sensorValue = analogRead(PHOTO_SENSOR);
-    bool isDoorOpen = false;
-    if (digitalRead(GREEN_LED) == HIGH)
+    int lightLevel = analogRead(LDR_PIN);
+
+    if (lightLevel > lightBorder)
     {
-        isDoorOpen = true;
+        openDoor();
+    }
+}
+
+void openDoor()
+{
+    bool doorAlreadyOpen = (digitalRead(LED_GREEN) == HIGH);
+
+    digitalWrite(LED_RED, LOW);
+    digitalWrite(LED_GREEN, HIGH);
+
+    if (!doorAlreadyOpen)
+    {
+        Serial.println("Дверь открывается...");
     }
 
-    if (sensorValue > threshold)
+    delay(openDelay);
+
+    int lightCheck = analogRead(LDR_PIN);
+    if (lightCheck <= lightBorder)
     {
-        digitalWrite(RED_LED, LOW);
-        digitalWrite(GREEN_LED, HIGH);
-        if (!isDoorOpen)
-        {
-            Serial.println("Двери открываются!");
-        }
-
-        delay(doorOpenTime);
-
-        sensorValue = analogRead(PHOTO_SENSOR);
-        if (sensorValue <= threshold)
-        {
-            digitalWrite(GREEN_LED, LOW);
-            digitalWrite(RED_LED, HIGH);
-            Serial.println("Двери закрываются");
-        }
+        digitalWrite(LED_GREEN, LOW);
+        digitalWrite(LED_RED, HIGH);
+        Serial.println("Дверь закрывается");
     }
 }

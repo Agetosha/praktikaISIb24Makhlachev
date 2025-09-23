@@ -1,51 +1,52 @@
 #include <Servo.h>
 
-Servo myServo;
-int currentAngle = 0;
+Servo servoMotor;
+int lastPos = 0;
 
 void setup()
 {
     Serial.begin(9600);
-    myServo.attach(4);
-    myServo.write(currentAngle);
-    Serial.println("Введите угол (0-180): ");
+    servoMotor.attach(4);
+    servoMotor.write(lastPos);
+    Serial.println("Введите значение угла от 0 до 180:");
 }
 
 void loop()
 {
-    if (Serial.available() > 0)
+    if (Serial.available())
     {
-        int newAngle = Serial.parseInt();
+        int target = Serial.parseInt();
 
-        if (newAngle >= 0 && newAngle <= 180)
+        if (target < 0 || target > 180)
         {
-            if (newAngle != currentAngle)
-            {
-                Serial.print("Сервопривод поворачивается на: ");
-                Serial.println(newAngle);
+            Serial.println("Некорректный ввод! Диапазон: 0–180");
+            return;
+        }
 
-                if (newAngle > currentAngle)
-                {
-                    for (int i = currentAngle; i <= newAngle; i++)
-                    {
-                        myServo.write(i);
-                        delay(15);
-                    }
-                }
-                else
-                {
-                    for (int i = currentAngle; i >= newAngle; i--)
-                    {
-                        myServo.write(i);
-                        delay(15);
-                    }
-                }
-                currentAngle = newAngle;
-            }
+        if (target == lastPos)
+        {
+            Serial.println("Сервопривод уже находится в этой позиции.");
+            return;
+        }
+
+        Serial.print("Движение к углу: ");
+        Serial.println(target);
+        int step = 0;
+        if (target > lastPos)
+        {
+            step = 1;
         }
         else
         {
-            Serial.println("Ошибка! Введите угол от 0 до 180");
+            step = -1;
         }
+
+        for (int pos = lastPos; pos != target + step; pos += step)
+        {
+            servoMotor.write(pos);
+            delay(15);
+        }
+
+        lastPos = target;
     }
 }

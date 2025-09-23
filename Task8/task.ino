@@ -1,109 +1,124 @@
 #include <Adafruit_NeoPixel.h>
-#define PIN 6
-#define LED_COUNT 64
 
-Adafruit_NeoPixel leds(LED_COUNT, PIN, NEO_GRB + NEO_KHZ800);
-int getIndex(int x, int y)
+#define DATA_PIN 6
+#define NUM_LEDS 64
+
+Adafruit_NeoPixel matrix(NUM_LEDS, DATA_PIN, NEO_GRB + NEO_KHZ800);
+
+// вычисляем индекс светодиода по координатам
+int indexFromXY(int col, int row)
 {
-    return (y % 2 == 0) ? (y * 8 + x) : (y * 8 + (7 - x));
+    if (row % 2 == 0)
+    {
+        return row * 8 + col;
+    }
+    else
+    {
+        return row * 8 + (7 - col);
+    }
 }
 
 void setup()
 {
-    leds.begin();
+    matrix.begin();
+    matrix.clear();
+    matrix.show();
 }
 
 void loop()
 {
-    smiley();
-    heart();
-    fillEffect();
+    drawArrow();
+    drawCross();
+    rainbowFill();
 }
 
-void smiley()
+// отображение стрелки
+void drawArrow()
 {
-    byte smile[8][8] = {
-        {0, 0, 1, 1, 1, 1, 0, 0},
-        {0, 1, 0, 0, 0, 0, 1, 0},
-        {1, 0, 1, 0, 0, 1, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 1, 0, 0, 1, 0, 1},
-        {1, 0, 0, 1, 1, 0, 0, 1},
-        {0, 1, 0, 0, 0, 0, 1, 0},
-        {0, 0, 1, 1, 1, 1, 0, 0}};
-
-    for (int i = 0; i < 3; i++)
-    {
-        leds.clear();
-        for (int y = 0; y < 8; y++)
-        {
-            for (int x = 0; x < 8; x++)
-            {
-                if (smile[y][x])
-                {
-                    leds.setPixelColor(getIndex(x, y), leds.Color(255, 255, 0));
-                }
-            }
-        }
-        leds.show();
-        delay(500);
-        leds.clear();
-        leds.show();
-        delay(300);
-    }
-}
-
-void heart()
-{
-    byte heart[8][8] = {
-        {0, 1, 1, 0, 0, 1, 1, 0},
-        {1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1},
-        {0, 1, 1, 1, 1, 1, 1, 0},
-        {0, 0, 1, 1, 1, 1, 0, 0},
+    byte arrow[8][8] = {
         {0, 0, 0, 1, 1, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0}};
+        {0, 0, 1, 1, 1, 1, 0, 0},
+        {0, 1, 0, 1, 1, 0, 1, 0},
+        {1, 0, 0, 1, 1, 0, 0, 1},
+        {0, 0, 0, 1, 1, 0, 0, 0},
+        {0, 0, 0, 1, 1, 0, 0, 0},
+        {0, 0, 0, 1, 1, 0, 0, 0},
+        {0, 0, 0, 1, 1, 0, 0, 0}};
 
-    for (int i = 0; i < 3; i++)
+    for (int rep = 0; rep < 2; rep++)
     {
-        leds.clear();
+        matrix.clear();
         for (int y = 0; y < 8; y++)
         {
             for (int x = 0; x < 8; x++)
             {
-                if (heart[y][x])
+                if (arrow[y][x])
                 {
-                    leds.setPixelColor(getIndex(x, y), leds.Color(255, 0, 0));
+                    matrix.setPixelColor(indexFromXY(x, y), matrix.Color(0, 200, 255));
                 }
             }
         }
-        leds.show();
-        delay(500);
-        leds.clear();
-        leds.show();
+        matrix.show();
+        delay(600);
+        matrix.clear();
+        matrix.show();
         delay(300);
     }
 }
 
-void fillEffect()
+// отображение крестика
+void drawCross()
 {
-    int colors[3][3] = {
+    byte cross[8][8] = {
+        {0, 0, 0, 1, 1, 0, 0, 0},
+        {0, 0, 0, 1, 1, 0, 0, 0},
+        {0, 0, 0, 1, 1, 0, 0, 0},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {0, 0, 0, 1, 1, 0, 0, 0},
+        {0, 0, 0, 1, 1, 0, 0, 0},
+        {0, 0, 0, 1, 1, 0, 0, 0}};
+
+    for (int rep = 0; rep < 2; rep++)
+    {
+        matrix.clear();
+        for (int y = 0; y < 8; y++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                if (cross[y][x])
+                {
+                    matrix.setPixelColor(indexFromXY(x, y), matrix.Color(255, 50, 50));
+                }
+            }
+        }
+        matrix.show();
+        delay(600);
+        matrix.clear();
+        matrix.show();
+        delay(300);
+    }
+}
+
+// эффект последовательного заполнения цветами
+void rainbowFill()
+{
+    int pal[3][3] = {
         {255, 0, 0},
         {0, 255, 0},
         {0, 0, 255}};
 
     for (int c = 0; c < 3; c++)
     {
-        for (int i = 0; i < 64; i++)
+        for (int i = 0; i < NUM_LEDS; i++)
         {
-            leds.setPixelColor(i, leds.Color(colors[c][0], colors[c][1], colors[c][2]));
-            leds.show();
-            delay(30);
+            matrix.setPixelColor(i, matrix.Color(pal[c][0], pal[c][1], pal[c][2]));
+            matrix.show();
+            delay(25);
         }
-        delay(300);
-        leds.clear();
-        leds.show();
-        delay(300);
+        delay(350);
+        matrix.clear();
+        matrix.show();
+        delay(250);
     }
 }
