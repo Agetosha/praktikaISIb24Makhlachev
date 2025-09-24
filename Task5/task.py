@@ -1,28 +1,31 @@
-print("Введите количество строк(h) и количество столбцов(w): ")
+print("Введите размеры матрицы: ")
 h, w = map(int, input().split())
+
 matrix = []
 print("Введите матрицу: ")
-for i in range(h):
+for _ in range(h):
     row = list(map(int, input().split()))
     matrix.append(row)
 
+# поиск границ фигуры
+min_row = h
+max_row = 0
+min_col = w
+max_col = 0
 
-min_r, max_r = h, -1
-min_c, max_c = w, -1
-
+# проходим по всем элементам матрицы
 for i in range(h):
-    for j in range(min(w, len(matrix[i]))):
+    for j in range(w):
         if matrix[i][j] == 1:
-            if i < min_r: min_r = i
-            if i > max_r: max_r = i
-            if j < min_c: min_c = j
-            if j > max_c: max_c = j
-
-# чтобы границы не задевали фигуру:
-top = min_r + 1
-left = min_c - 1
-bottom = max_r + 4
-right = max_c + 1
+            # обновляем границы
+            if i < min_row:
+                min_row = i
+            if i > max_row:
+                max_row = i
+            if j < min_col:
+                min_col = j
+            if j > max_col:
+                max_col = j
 
 print("Результат: ")
-print(top, left, bottom, right)
+print(f"{min_row} {min_col} {max_row} {max_col}")
