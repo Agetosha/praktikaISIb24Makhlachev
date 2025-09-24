@@ -3,10 +3,10 @@ n, k = map(int, input().split())
 print("Введите перестановку: ")
 P = list(map(int, input().split()))
 print("Введите строку: ")
-s = input().strip()
+s = input().strip() #удаляет пробелы, табуляции, переносы строк с начала и конца строки, но не трогает пробелы внутри строки
 
-orig = [''] * n
-visited = [False] * n
+orig = [''] * n #создает список из n пустых строк
+visited = [False] * n #создает список из n False
 
 for i in range(n):
     if visited[i]:
@@ -25,4 +25,4 @@ for i in range(n):
         orig[j] = s[pos]
 
 print("Результат: ")
-print("".join(orig))
+print("".join(orig)) #соединяет элементы списка orig в одну строку
