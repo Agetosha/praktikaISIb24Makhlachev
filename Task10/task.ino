@@ -1,20 +1,22 @@
 #include <Servo.h>
 
-Servo servoMotor;
-int lastPos = 0;
+Servo servoMotor; // создаем объект для управления сервоприводом
+int lastPos = 0;  // переменная для хранения последней позиции сервопривода
 
 void setup()
 {
-    Serial.begin(9600);
-    servoMotor.attach(4);
-    servoMotor.write(lastPos);
+    Serial.begin(9600);        // инициализируем последовательный порт (монитор порта)
+    servoMotor.attach(4);      // подключаем сервопривод к пину 4 Arduino
+    servoMotor.write(lastPos); // устанавливаем сервопривод в начальное положение 0 граудсов
     Serial.println("Введите значение угла от 0 до 180:");
 }
 
 void loop()
 {
+    // проверяем, есть ли данные в последовательном порту (пользователь ввел угол
     if (Serial.available())
     {
+        // читаем целое число из последовательного порта
         int target = Serial.parseInt();
 
         if (target < 0 || target > 180)
@@ -23,6 +25,7 @@ void loop()
             return;
         }
 
+        // проверяем, не находится ли сервопривод уже в требуемой позиции
         if (target == lastPos)
         {
             Serial.println("Сервопривод уже находится в этой позиции.");
@@ -31,22 +34,26 @@ void loop()
 
         Serial.print("Движение к углу: ");
         Serial.println(target);
+
+        // определяем направление движения
         int step = 0;
         if (target > lastPos)
         {
-            step = 1;
+            step = 1; // двигаемся вперед
         }
         else
         {
-            step = -1;
+            step = -1; // двигаемся назад
         }
 
+        // плавно перемещаем сервопривод от текущей позиции к целевой
         for (int pos = lastPos; pos != target + step; pos += step)
         {
-            servoMotor.write(pos);
-            delay(15);
+            servoMotor.write(pos); // устанавливаем текущую позицию сервопривода
+            delay(15);             // небольшая задержка для плавности движения
         }
 
+        // сохраняем новую позицию как последнюю
         lastPos = target;
     }
 }
