@@ -1,6 +1,9 @@
 print("Введите количество строк(h) и количество столбцов(w): ")
 h, w = map(int, input().split())
-matrix = [list(map(int, input().split())) for _ in range(h)]
+matrix = []
+for i in range(h):
+    row = list(map(int, input().split()))
+    matrix.append(row)
 
 print("Введите матрицу: ")
 min_r, max_r = h, -1
