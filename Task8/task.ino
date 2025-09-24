@@ -2,30 +2,34 @@
 
 #define DATA_PIN 6
 #define NUM_LEDS 64
-
+// создание объекта для управления светодиодной матрицей
 Adafruit_NeoPixel matrix(NUM_LEDS, DATA_PIN, NEO_GRB + NEO_KHZ800);
+// NUM_LEDS - количество светодиодов (64 для матрицы 8x8)
+// DATA_PIN - пин Arduino, к которому подключена матрица (пин 6)
+// NEO_GRB - порядок цветов: Green, Red, Blue
+// NEO_KHZ800 - частота передачи данных (800 kHz для NeoPixel)
 
 // вычисляем индекс светодиода по координатам
 int indexFromXY(int col, int row)
 {
     if (row % 2 == 0)
-    {
-        return row * 8 + col;
+    {                         // если строка четная
+        return row * 8 + col; // светодиоды идут слева направо
     }
     else
-    {
-        return row * 8 + (7 - col);
+    {                               // если строка нечетная
+        return row * 8 + (7 - col); // светодиоды идут зигзагом
     }
 }
 
 void setup()
 {
-    matrix.begin();
-    matrix.clear();
-    matrix.show();
+    matrix.begin(); // инициализация библиотеки
+    matrix.clear(); // очистка матрицы (все светодиоды выключены)
+    matrix.show();  // применение изменений (отправка данных на матрицу)
 }
 
-void loop()
+void loop() // выполняется бесконечно после setup()
 {
     drawArrow();
     drawCross();
@@ -46,23 +50,28 @@ void drawArrow()
         {0, 0, 0, 1, 1, 0, 0, 0}};
 
     for (int rep = 0; rep < 2; rep++)
-    {
-        matrix.clear();
+    {                   // повторить 2 раза
+        matrix.clear(); // очистить матрицу
+
+        // проход по всем пикселям матрицы 8x8
         for (int y = 0; y < 8; y++)
         {
             for (int x = 0; x < 8; x++)
             {
                 if (arrow[y][x])
-                {
+                { // если в матрице стрелки 1
+                    // включить светодиод с цветом (0,200,255) - голубой
                     matrix.setPixelColor(indexFromXY(x, y), matrix.Color(0, 200, 255));
                 }
             }
         }
-        matrix.show();
-        delay(600);
-        matrix.clear();
-        matrix.show();
-        delay(300);
+
+        matrix.show(); // показать стрелку
+        delay(600);    // ждать 600 мс
+
+        matrix.clear(); // очистить матрицу
+        matrix.show();  // применить очистку
+        delay(300);     // ждать 300 мс (мигание)
     }
 }
 
@@ -122,3 +131,10 @@ void rainbowFill()
         delay(250);
     }
 }
+// как работает отрисовка:
+//     создается битовая карта (массив 8x8), где 1 - светить, 0 - не светить
+//     двойной цикл проходит по всем координатам матрицы
+//     проверка условия if (arrow[y][x]) - если элемент равен 1
+//     установка цвета для конкретного светодиода через indexFromXY()
+//     show() отправляет все изменения на матрицу
+//     мигание создается чередованием показа и очистки
