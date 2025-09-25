@@ -1,8 +1,8 @@
 print("Введите количество пар: ")
 n = int(input().strip()) #удаляет пробелы, табуляции, переносы строк с начала и конца строки, но не трогает пробелы внутри строки
 results = []
+print("Введите данные: ")
 for _ in range(n):
-    print("Введите данные: ")
     data = list(map(int, input().split()))
     a, b, x, y = data
     pairs_B1 = min(b, x)
