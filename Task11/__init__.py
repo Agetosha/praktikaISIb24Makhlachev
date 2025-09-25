@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # загружает изображение из файла
-image = cv2.imread("test2.jpg")
+image = cv2.imread("test_2.jpg")
 result_image = image.copy()
 
 blurred_image = cv2.GaussianBlur(image, (11, 11), 0) #добавляет размытие к изображению
